@@ -36,6 +36,7 @@
  *	YOSHIFUJI Hideaki @USAGI	:	improved source address
  *						selection; consider scope,
  *						status etc.
+ *	João Pedro Taveira			:	added RPL support
  */
 
 #define pr_fmt(fmt) "IPv6: " fmt
@@ -85,6 +86,10 @@
 #include <linux/rtnetlink.h>
 #include <linux/netconf.h>
 #include <linux/random.h>
+#ifdef CONFIG_IPV6_RPL
+#include <net/rpl/rpl.h>
+#endif
+
 #include <linux/uaccess.h>
 #include <asm/unaligned.h>
 
@@ -211,7 +216,13 @@ static struct ipv6_devconf ipv6_devconf __read_mostly = {
 	.accept_ra_mtu		= 1,
 	.stable_secret		= {
 		.initialized = false,
-	}
+	},
+#ifdef CONFIG_IPV6_RPL
+	.rpl_enabled = 0,
+	.rpl_joined = 0,
+	.rpl_dodag_root = 0,
+	.rpl_icmp_dump = 0,
+#endif
 };
 
 static struct ipv6_devconf ipv6_devconf_dflt __read_mostly = {
@@ -253,6 +264,12 @@ static struct ipv6_devconf ipv6_devconf_dflt __read_mostly = {
 	.stable_secret		= {
 		.initialized = false,
 	},
+#ifdef CONFIG_IPV6_RPL
+	.rpl_enabled = 0,
+	.rpl_joined = 0,
+	.rpl_dodag_root = 0,
+	.rpl_icmp_dump = 0,
+#endif
 };
 
 /* Check if a valid qdisc is available */
@@ -5556,6 +5573,36 @@ static struct addrconf_sysctl_table
 			.mode           = 0644,
 			.proc_handler   = proc_dointvec
 		},
+#ifdef CONFIG_IPV6_RPL
+		{
+			.procname       = "rpl_enabled",
+			.data           = &ipv6_devconf.rpl_enabled,
+			.maxlen         = sizeof(int),
+			.mode           = 0644,
+			.proc_handler   = rpl_sysctl_rpl_enabled
+		},
+		{
+			.procname       = "rpl_joined",
+			.data           = &ipv6_devconf.rpl_joined,
+			.maxlen         = sizeof(int),
+			.mode           = 0644,
+			.proc_handler   = rpl_sysctl_rpl_joined
+		},
+		{
+			.procname       = "rpl_dodag_root",
+			.data           = &ipv6_devconf.rpl_dodag_root,
+			.maxlen         = sizeof(int),
+			.mode           = 0644,
+			.proc_handler   = rpl_sysctl_rpl_dodag_root
+		},
+		{
+			.procname       = "rpl_icmp_dump",
+			.data           = &ipv6_devconf.rpl_icmp_dump,
+			.maxlen         = sizeof(int),
+			.mode           = 0644,
+			.proc_handler   = rpl_sysctl_rpl_icmp_dump
+		},
+#endif /* CONFIG_IPV6_RPL */
 		{
 			.procname	= "suppress_frag_ndisc",
 			.data		= &ipv6_devconf.suppress_frag_ndisc,

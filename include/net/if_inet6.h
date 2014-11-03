@@ -17,6 +17,9 @@
 
 #include <net/snmp.h>
 #include <linux/ipv6.h>
+#ifdef CONFIG_IPV6_RPL
+#include <net/rpl/rpl.h>
+#endif /* CONFIG_IPV6_RPL */
 
 /* inet6_dev.if_flags */
 

@@ -57,6 +57,12 @@ struct ipv6_devconf {
 		bool initialized;
 		struct in6_addr secret;
 	} stable_secret;
+#ifdef CONFIG_IPV6_RPL
+	__s32		rpl_enabled;
+	__s32		rpl_joined;
+	__s32		rpl_dodag_root;
+	__s32		rpl_icmp_dump;
+#endif /* CONFIG_IPV6_RPL */
 	void		*sysctl;
 };
 

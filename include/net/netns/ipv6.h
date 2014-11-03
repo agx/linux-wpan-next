@@ -3,6 +3,7 @@
  */
 
 #include <net/inet_frag.h>
+#include <net/netns/rpl.h>
 
 #ifndef __NETNS_IPV6_H__
 #define __NETNS_IPV6_H__
@@ -68,6 +69,9 @@ struct netns_ipv6 {
 #endif
 	struct sock		**icmp_sk;
 	struct sock             *ndisc_sk;
+#ifdef CONFIG_IPV6_RPL
+	struct netns_rpl		rpl;
+#endif
 	struct sock             *tcp_sk;
 	struct sock             *igmp_sk;
 	struct sock		*mc_autojoin_sk;

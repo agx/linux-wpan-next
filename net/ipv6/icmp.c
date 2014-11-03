@@ -27,6 +27,8 @@
  *	Randy Dunlap and
  *	YOSHIFUJI Hideaki @USAGI:	Per-interface statistics support
  *	Kazunori MIYAZAWA @USAGI:       change output process to use ip6_append_data
+ *	João Pedro Taveira		:	added RPL support
+ *
  */
 
 #define pr_fmt(fmt) "IPv6: " fmt
@@ -70,6 +72,10 @@
 #include <net/dsfield.h>
 
 #include <asm/uaccess.h>
+
+#ifdef CONFIG_IPV6_RPL
+#include <net/rpl/rpl.h>
+#endif /* CONFIG_IPV6_RPL */
 
 /*
  *	The ICMP socket(s). This is the most convenient way to flow control
@@ -711,13 +717,21 @@ static int icmpv6_rcv(struct sk_buff *skb)
 				    saddr, daddr);
 		goto csum_error;
 	}
-
+	/*
+	 * The smallest RPL message has 6 bytes, which fails next validation
+	 * because sizeof(*hdr) is 8 bytes
+	 * */
+#ifndef CONFIG_IPV6_RPL
 	if (!pskb_pull(skb, sizeof(*hdr)))
 		goto discard_it;
-
+#endif /* CONFIG_IPV6_RPL */
 	hdr = icmp6_hdr(skb);
 
 	type = hdr->icmp6_type;
+#ifdef CONFIG_IPV6_RPL
+	if (type != ICMPV6_RPL && !pskb_pull(skb, sizeof(*hdr)))
+		goto discard_it;
+#endif /* CONFIG_IPV6_RPL */
 
 	ICMP6MSGIN_INC_STATS_BH(dev_net(dev), idev, type);
 
@@ -757,6 +771,12 @@ static int icmpv6_rcv(struct sk_buff *skb)
 	case NDISC_REDIRECT:
 		ndisc_rcv(skb);
 		break;
+
+#ifdef CONFIG_IPV6_RPL
+	case ICMPV6_RPL:
+		rpl_rcv(skb);
+		break;
+#endif /* CONFIG_IPV6_RPL */
 
 	case ICMPV6_MGM_QUERY:
 		igmp6_event_query(skb);

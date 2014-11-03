@@ -22,6 +22,11 @@ ipv6-$(CONFIG_IPV6_MULTIPLE_TABLES) += fib6_rules.o
 ipv6-$(CONFIG_PROC_FS) += proc.o
 ipv6-$(CONFIG_SYN_COOKIES) += syncookies.o
 
+ipv6-$(CONFIG_IPV6_RPL) += rpl/rpl_trickle.o rpl/rpl_debug.o rpl/rpl_dag.o \
+	rpl/rpl_icmp6.o rpl/rpl.o rpl/netlink.o rpl/nl_policy.o rpl/nl-dag-conf.o \
+	rpl/nl-dag-info.o rpl/nl-dag-mng.o
+obj-$(CONFIG_IPV6_RPL_OF_OF0) += rpl_of_of0.o
+
 ipv6-objs += $(ipv6-y)
 
 obj-$(CONFIG_INET6_AH) += ah6.o

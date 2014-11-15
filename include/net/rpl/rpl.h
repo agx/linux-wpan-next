@@ -31,16 +31,16 @@ extern int rpl_rcv(struct sk_buff *skb);
 extern int	rpl_init(void);
 extern void	rpl_cleanup(void);
 
-extern int rpl_sysctl_rpl_enabled(ctl_table *ctl, int write,
+extern int rpl_sysctl_rpl_enabled(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos);
 
-extern int rpl_sysctl_rpl_joined(ctl_table *ctl, int write,
+extern int rpl_sysctl_rpl_joined(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos);
 
-extern int rpl_sysctl_rpl_dodag_root(ctl_table *ctl, int write,
+extern int rpl_sysctl_rpl_dodag_root(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos);
 
-extern int rpl_sysctl_rpl_icmp_dump(ctl_table *ctl, int write,
+extern int rpl_sysctl_rpl_icmp_dump(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos);
 
 #endif /* RPL_H_ */

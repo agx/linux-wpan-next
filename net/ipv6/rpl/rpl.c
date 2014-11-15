@@ -659,7 +659,7 @@ static struct notifier_block rpl_inet6addr_notifier = {
 
 const struct in6_addr in6addr_all_rpl_nodes = IN6ADDR_ALL_RPL_NODES_INIT;
 
-int rpl_sysctl_rpl_enabled(ctl_table *ctl, int write,
+int rpl_sysctl_rpl_enabled(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos)
 {
 	int ret;
@@ -723,7 +723,7 @@ int rpl_sysctl_rpl_enabled(ctl_table *ctl, int write,
 	return ret;
 }
 
-int rpl_sysctl_rpl_joined(ctl_table *ctl, int write,
+int rpl_sysctl_rpl_joined(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos)
 {
 	int ret;
@@ -735,7 +735,7 @@ int rpl_sysctl_rpl_joined(ctl_table *ctl, int write,
 	return ret;
 }
 
-int rpl_sysctl_rpl_dodag_root(ctl_table *ctl, int write,
+int rpl_sysctl_rpl_dodag_root(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos)
 {
 	int ret;
@@ -743,7 +743,7 @@ int rpl_sysctl_rpl_dodag_root(ctl_table *ctl, int write,
 	return ret;
 }
 
-int rpl_sysctl_rpl_icmp_dump(ctl_table *ctl, int write,
+int rpl_sysctl_rpl_icmp_dump(struct ctl_table *ctl, int write,
 			    void __user *buffer, size_t *lenp, loff_t *ppos)
 {
 	int ret;

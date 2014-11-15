@@ -955,10 +955,6 @@ static int __init inet6_init(void)
 	if (err)
 		goto pingv6_fail;
 
-#ifdef CONFIG_IPV6_RPL
-rpl_fail:
-	rpl_cleanup();
-#endif
 #ifdef CONFIG_SYSCTL
 	err = ipv6_sysctl_register();
 	if (err)
@@ -972,6 +968,10 @@ rpl_fail:
 out:
 	return err;
 
+#ifdef CONFIG_IPV6_RPL
+rpl_fail:
+	rpl_cleanup();
+#endif
 #ifdef CONFIG_SYSCTL
 sysctl_fail:
 	pingv6_exit();

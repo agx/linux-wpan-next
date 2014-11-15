@@ -66,7 +66,7 @@ int rpl_nl_mcast(struct sk_buff *msg, unsigned int group)
 	if (genlmsg_end(msg, hdr) < 0)
 		goto out;
 
-	return genlmsg_multicast(msg, 0, group, GFP_ATOMIC);
+	return genlmsg_multicast(&nlrpl_family, msg, 0, group, GFP_ATOMIC);
 out:
 	nlmsg_free(msg);
 	return -ENOBUFS;
@@ -105,29 +105,28 @@ out:
 	return -ENOBUFS;
 }
 
+static struct genl_ops nlrpl_dag_conf_ops[] = {
+	RPL_DUMP(RPL_LIST_DAG, rpl_list_dag,rpl_dump_dag),
+	RPL_DUMP(RPL_LIST_IFACE, rpl_list_iface,rpl_dump_iface),
+	RPL_DUMP(RPL_ENABLE_IFACE, rpl_enable_iface,rpl_enable_ifaces),
+	RPL_DUMP(RPL_DISABLE_IFACE, rpl_disable_iface,rpl_disable_ifaces),
+	RPL_DUMP(RPL_LIST_PARENTS, rpl_dag_list_parents,rpl_dag_dump_parents),
+	RPL_DUMP(RPL_LIST_NEIGHBORS, rpl_dag_list_neighbors,rpl_dag_dump_neighbors),
+	RPL_DUMP(RPL_LIST_DOWNWARD_ROUTES, rpl_dag_list_downward_routes,rpl_dag_dump_downward_routes),
+	RPL_OP(RPL_GLOBAL_REPAIR,rpl_dag_global_repair),
+	RPL_OP(RPL_LOCAL_REPAIR,rpl_dag_local_repair),
+	RPL_OP(RPL_DAO_UPDATE,rpl_dag_dao_update),
+};
+
+static const struct genl_multicast_group rpl_genl_mcgrps[] = {
+	{ .name = "msg", },
+};
+
 int __init rpl_nl_init(void)
 {
-	int rc;
-
-	rc = genl_register_family(&nlrpl_family);
-	if (rc)
-		goto fail;
-
-	rc = nlrpl_dag_conf_register();
-	if (rc)
-		goto fail;
-	rc = nlrpl_dag_info_register();
-	if (rc)
-		goto fail;
-	rc = nlrpl_dag_mng_register();
-	if (rc)
-		goto fail;
-
-	return 0;
-
-fail:
-	genl_unregister_family(&nlrpl_family);
-	return rc;
+	return genl_register_family_with_ops_groups(&nlrpl_family,
+							nlrpl_dag_conf_ops,
+							rpl_genl_mcgrps);
 }
 
 void __exit rpl_nl_exit(void)

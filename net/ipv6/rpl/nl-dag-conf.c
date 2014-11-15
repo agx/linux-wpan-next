@@ -63,8 +63,7 @@ out:
 	return -EMSGSIZE;
 }
 
-static int rpl_list_dag(struct sk_buff *skb,
-	struct genl_info *info)
+int rpl_list_dag(struct sk_buff *skb, struct genl_info *info)
 {
 	struct net *net;
 	struct sk_buff *msg;
@@ -139,8 +138,7 @@ static int rpl_dump_dag_iter(struct rpl_dag *dag, void *_data)
 	return 0;
 }
 
-static int rpl_dump_dag(struct sk_buff *skb,
-	struct netlink_callback *cb)
+int rpl_dump_dag(struct sk_buff *skb, struct netlink_callback *cb)
 {
 	struct net *net = sock_net(skb->sk);
 	struct rpl_dag *dag;
@@ -192,8 +190,7 @@ out:
 	return -EMSGSIZE;
 }
 
-static int rpl_list_iface(struct sk_buff *skb,
-	struct genl_info *info)
+int rpl_list_iface(struct sk_buff *skb,	struct genl_info *info)
 {
 	struct net *net;
 	struct sk_buff *msg;
@@ -259,8 +256,7 @@ static int rpl_dump_iface_iter(struct rpl_enabled_device *enabled_device, void *
 	return 0;
 }
 
-static int rpl_dump_iface(struct sk_buff *skb,
-	struct netlink_callback *cb)
+int rpl_dump_iface(struct sk_buff *skb,	struct netlink_callback *cb)
 {
 	struct net *net = sock_net(skb->sk);
 	struct rpl_enabled_device *enabled_device;
@@ -288,8 +284,7 @@ static int rpl_dump_iface(struct sk_buff *skb,
  * Enable interface(s)
  */
 
-static int rpl_enable_iface(struct sk_buff *skb,
-	struct genl_info *info)
+int rpl_enable_iface(struct sk_buff *skb, struct genl_info *info)
 {
 	struct sk_buff *msg;
 	int rc = -ENOBUFS;
@@ -362,8 +357,7 @@ out_dev:
 
 }
 
-static int rpl_enable_ifaces(struct sk_buff *skb,
-	struct netlink_callback *cb)
+int rpl_enable_ifaces(struct sk_buff *skb, struct netlink_callback *cb)
 {
 	struct net *net = sock_net(skb->sk);
 	int h, s_h;
@@ -444,8 +438,7 @@ done:
  * Disable interface(s)
  */
 
-static int rpl_disable_iface(struct sk_buff *skb,
-	struct genl_info *info)
+int rpl_disable_iface(struct sk_buff *skb, struct genl_info *info)
 {
 	struct net *net;
 	struct sk_buff *msg;
@@ -506,8 +499,7 @@ out_dev:
 
 }
 
-static int rpl_disable_ifaces(struct sk_buff *skb,
-	struct netlink_callback *cb)
+int rpl_disable_ifaces(struct sk_buff *skb,	struct netlink_callback *cb)
 {
 	struct net *net = sock_net(skb->sk);
 	int h, s_h;
@@ -583,33 +575,4 @@ done:
 	cb->args[1] = idx;
 
 	return skb->len;
-}
-
-/*
- * Operations
- */
-
-static struct genl_ops nlrpl_dag_conf_ops[] = {
-	RPL_DUMP(RPL_LIST_DAG, rpl_list_dag,rpl_dump_dag),
-	RPL_DUMP(RPL_LIST_IFACE, rpl_list_iface,rpl_dump_iface),
-	RPL_DUMP(RPL_ENABLE_IFACE, rpl_enable_iface,rpl_enable_ifaces),
-	RPL_DUMP(RPL_DISABLE_IFACE, rpl_disable_iface,rpl_disable_ifaces),
-};
-
-/*
- * No need to unregister as family unregistration will do it.
- */
-int nlrpl_dag_conf_register(void)
-{
-	int i;
-	int rc;
-
-	for (i = 0; i < ARRAY_SIZE(nlrpl_dag_conf_ops); i++) {
-		rc = genl_register_ops(&nlrpl_family,
-				&nlrpl_dag_conf_ops[i]);
-		if (rc)
-			return rc;
-	}
-
-	return 0;
 }

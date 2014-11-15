@@ -119,14 +119,12 @@ out_dag:
 
 }
 
-static int rpl_dag_list_parents(struct sk_buff *skb,
-	struct genl_info *info)
+int rpl_dag_list_parents(struct sk_buff *skb, struct genl_info *info)
 {
 	return rpl_dag_list_nodes(RPL_LIST_PARENTS,skb,info);
 }
 
-static int rpl_dag_list_neighbors(struct sk_buff *skb,
-	struct genl_info *info)
+int rpl_dag_list_neighbors(struct sk_buff *skb,	struct genl_info *info)
 {
 	return rpl_dag_list_nodes(RPL_LIST_NEIGHBORS,skb,info);
 }
@@ -201,14 +199,12 @@ static int rpl_dag_dump_nodes(u8 cmd, struct sk_buff *skb,
 	return skb->len;
 }
 
-static int rpl_dag_dump_parents(struct sk_buff *skb,
-	struct netlink_callback *cb)
+int rpl_dag_dump_parents(struct sk_buff *skb, struct netlink_callback *cb)
 {
 	return rpl_dag_dump_nodes(RPL_LIST_PARENTS,skb,cb);
 }
 
-static int rpl_dag_dump_neighbors(struct sk_buff *skb,
-	struct netlink_callback *cb)
+int rpl_dag_dump_neighbors(struct sk_buff *skb,	struct netlink_callback *cb)
 {
 	return rpl_dag_dump_nodes(RPL_LIST_NEIGHBORS,skb,cb);
 }
@@ -276,7 +272,7 @@ static int rpl_dag_dump_downward_routes_iter(struct rpl_dag *dag, void *_data)
 	return 0;
 }
 
-static int rpl_dag_list_downward_routes(struct sk_buff *skb,
+int rpl_dag_list_downward_routes(struct sk_buff *skb,
 	struct genl_info *info)
 {
 	struct net *net;
@@ -326,7 +322,7 @@ out_dag:
 
 }
 
-static int rpl_dag_dump_downward_routes(struct sk_buff *skb,
+int rpl_dag_dump_downward_routes(struct sk_buff *skb,
 	struct netlink_callback *cb)
 {
 	struct net *net = sock_net(skb->sk);
@@ -349,28 +345,4 @@ static int rpl_dag_dump_downward_routes(struct sk_buff *skb,
 	cb->args[0] = data.idx;
 
 	return skb->len;
-}
-
-static struct genl_ops nlrpl_dag_info_ops[] = {
-	RPL_DUMP(RPL_LIST_PARENTS, rpl_dag_list_parents,rpl_dag_dump_parents),
-	RPL_DUMP(RPL_LIST_NEIGHBORS, rpl_dag_list_neighbors,rpl_dag_dump_neighbors),
-	RPL_DUMP(RPL_LIST_DOWNWARD_ROUTES, rpl_dag_list_downward_routes,rpl_dag_dump_downward_routes),
-};
-
-/*
- * No need to unregister as family unregistration will do it.
- */
-int nlrpl_dag_info_register(void)
-{
-	int i;
-	int rc;
-
-	for (i = 0; i < ARRAY_SIZE(nlrpl_dag_info_ops); i++) {
-		rc = genl_register_ops(&nlrpl_family,
-				&nlrpl_dag_info_ops[i]);
-		if (rc)
-			return rc;
-	}
-
-	return 0;
 }

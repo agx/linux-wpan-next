@@ -28,8 +28,7 @@
  * Global Repair
  */
 
-static int rpl_dag_global_repair(struct sk_buff *skb,
-		struct genl_info *info)
+int rpl_dag_global_repair(struct sk_buff *skb, struct genl_info *info)
 {
 	struct net *net;
 	struct sk_buff *msg;
@@ -82,8 +81,7 @@ out_dag:
  * Local Repair
  */
 
-static int rpl_dag_local_repair(struct sk_buff *skb,
-		struct genl_info *info)
+int rpl_dag_local_repair(struct sk_buff *skb, struct genl_info *info)
 {
 	struct net *net;
 	struct sk_buff *msg;
@@ -135,8 +133,7 @@ out_dag:
  * DAO Update
  */
 
-static int rpl_dag_dao_update(struct sk_buff *skb,
-		struct genl_info *info)
+int rpl_dag_dao_update(struct sk_buff *skb, struct genl_info *info)
 {
 	struct net *net;
 	struct sk_buff *msg;
@@ -183,32 +180,4 @@ out_free:
 out_dag:
 	rpl_dag_put(dag);
 	return rc;
-}
-
-/*
- * Operations
- */
-
-static struct genl_ops nlrpl_dag_mng_ops[] = {
-		RPL_OP(RPL_GLOBAL_REPAIR,rpl_dag_global_repair),
-		RPL_OP(RPL_LOCAL_REPAIR,rpl_dag_local_repair),
-		RPL_OP(RPL_DAO_UPDATE,rpl_dag_dao_update),
-};
-
-/*
- * No need to unregister as family unregistration will do it.
- */
-int nlrpl_dag_mng_register(void)
-{
-	int i;
-	int rc;
-
-	for (i = 0; i < ARRAY_SIZE(nlrpl_dag_mng_ops); i++) {
-		rc = genl_register_ops(&nlrpl_family,
-				&nlrpl_dag_mng_ops[i]);
-		if (rc)
-			return rc;
-	}
-
-	return 0;
 }

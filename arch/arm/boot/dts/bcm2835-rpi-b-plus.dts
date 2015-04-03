@@ -28,3 +28,16 @@
 		brcm,function = <4>; /* alt0 */
 	};
 };
+
+&spi {
+    status = "okay";
+    at86rf233@0 {
+        compatible = "atmel,at86rf233";
+        reg = <0>;
+        interrupts = <23 4>;
+        interrupt-parent = <&gpio>;
+        reset-gpio = <&gpio 24 1>;
+        sleep-tpio = <&gpio 25 1>;
+        spi-max-frequency = <7500000>;
+    };
+};

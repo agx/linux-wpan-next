@@ -63,11 +63,10 @@ int rpl_nl_mcast(struct sk_buff *msg, unsigned int group)
 	struct nlmsghdr *nlh = nlmsg_hdr(msg);
 	void *hdr = genlmsg_data(nlmsg_data(nlh));
 
-	if (genlmsg_end(msg, hdr) < 0)
-		goto out;
+	genlmsg_end(msg, hdr);
 
 	return genlmsg_multicast(&nlrpl_family, msg, 0, group, GFP_ATOMIC);
-out:
+
 	nlmsg_free(msg);
 	return -ENOBUFS;
 }
@@ -96,11 +95,10 @@ int rpl_nl_reply(struct sk_buff *msg, struct genl_info *info)
 	struct nlmsghdr *nlh = nlmsg_hdr(msg);
 	void *hdr = genlmsg_data(nlmsg_data(nlh));
 
-	if (genlmsg_end(msg, hdr) < 0)
-		goto out;
+	genlmsg_end(msg, hdr);
 
 	return genlmsg_reply(msg, info);
-out:
+
 	nlmsg_free(msg);
 	return -ENOBUFS;
 }

@@ -50,7 +50,8 @@ static int rpl_nl_dag_fill_node(u8 cmd, struct sk_buff *msg, u32 portid,
 			nla_put_u16(msg,RPL_ATTR_RANK,node->rank))
 		goto nla_put_failure;
 
-	return genlmsg_end(msg, hdr);
+	genlmsg_end(msg, hdr);
+	return 0;
 
 nla_put_failure:
 	genlmsg_cancel(msg, hdr);
@@ -238,7 +239,8 @@ static int rpl_nl_dag_fill_downward_route(struct sk_buff *msg, u32 portid,
 			nla_put_u8(msg,RPL_ATTR_ONE_HOP,transit_info->one_hop))
 		goto nla_put_failure;
 
-	return genlmsg_end(msg, hdr);
+	genlmsg_end(msg, hdr);
+	return 0;
 
 nla_put_failure:
 	genlmsg_cancel(msg, hdr);

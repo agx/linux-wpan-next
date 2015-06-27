@@ -55,7 +55,8 @@ static int rpl_nl_fill_dag(struct sk_buff *msg, u32 portid,
 			nla_put_u8(msg,RPL_ATTR_IS_ROOT,dag->is_root))
 		goto nla_put_failure;
 
-	return genlmsg_end(msg, hdr);
+	genlmsg_end(msg, hdr);
+	return 0;
 
 nla_put_failure:
 	genlmsg_cancel(msg, hdr);
@@ -182,7 +183,8 @@ static int rpl_nl_fill_enabled_device(struct sk_buff *msg, u32 portid,
 		nla_put_u8(msg,RPL_ATTR_DEV_ENABLED,true))
 		goto nla_put_failure;
 
-	return genlmsg_end(msg, hdr);
+	genlmsg_end(msg, hdr);
+	return 0;
 
 nla_put_failure:
 	genlmsg_cancel(msg, hdr);

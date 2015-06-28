@@ -213,20 +213,13 @@ int rpl_start(struct rpl_dag_conf *cfg, struct net_device *dev)
 	}
 
 	idev = __in6_dev_get(dev);
-	if(!idev){
+	if(!idev || idev->cnf.disable_ipv6) {
 		RPL_PRINTK(3,dbg,"%s: IPv6 is disabled",__func__);
 		err = -EINVAL;
 		goto out;
 	}
 
-	if(idev->cnf.disable_ipv6)
-	{
-		RPL_PRINTK(3,dbg,"%s: IPv6 is disabled",__func__);
-		err = -EINVAL;
-		goto out;
-	}
-
-	enabled_device = rpl_enabled_devices_list_add(dev,&err);
+	enabled_device = rpl_enabled_devices_list_add(dev, &err);
 	if(err || !enabled_device)
 	{
 		RPL_PRINTK(2,err,"%s: error adding dev to enabled devices list",__func__);

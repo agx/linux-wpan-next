@@ -340,7 +340,6 @@ struct rpl_enabled_device *rpl_enabled_devices_list_add(struct net_device *dev, 
 						"%s(): Error allocating memory to enabled device\n",
 						__func__);
 				ret = -ENOMEM;
-				mutex_unlock(&net->ipv6.rpl.rpl_enabled_devices_list_mutex);
 				goto out;
 			}
 			INIT_LIST_HEAD(&enabled->enabled_list);
@@ -351,7 +350,6 @@ struct rpl_enabled_device *rpl_enabled_devices_list_add(struct net_device *dev, 
 			if(!idev){
 				kfree(enabled);
 
-				mutex_unlock(&net->ipv6.rpl.rpl_enabled_devices_list_mutex);
 				ret = -ENOTSUPP;
 				goto out;
 			}
@@ -367,10 +365,10 @@ struct rpl_enabled_device *rpl_enabled_devices_list_add(struct net_device *dev, 
 
 			list_add(&enabled->enabled_list,&net->ipv6.rpl.rpl_enabled_devices_list_head);
 		}
-		mutex_unlock(&net->ipv6.rpl.rpl_enabled_devices_list_mutex);
 		ret = 0;
 	}
 out:
+	mutex_unlock(&net->ipv6.rpl.rpl_enabled_devices_list_mutex);
 	if(err)
 		*err = ret;
 	return enabled;

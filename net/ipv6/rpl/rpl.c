@@ -585,9 +585,11 @@ static int rpl_netdev_event(struct notifier_block *this, unsigned long event, vo
 		printk(KERN_DEBUG "%s(): REMOVEME calling in6_dev_get: %s\n",__func__,dev->name);
 		if (idev->cnf.rpl_enabled && !idev->cnf.rpl_joined && (idev->if_flags & IF_READY)){
 			printk(KERN_DEBUG "%s: REMOVEME rpl_start(%s) here\n",__func__,dev->name);
+                        rtnl_lock();
 			if (rpl_start(NULL,dev)) {
 				printk(KERN_WARNING "RPL: error starting RPL on %s\n",dev->name);
 			}
+                        rtnl_unlock();
 		}
 		printk(KERN_DEBUG "%s(): REMOVEME calling in6_dev_put: %s\n",__func__,dev->name);
 		in6_dev_put(idev);
@@ -697,11 +699,13 @@ int rpl_sysctl_rpl_enabled(struct ctl_table *ctl, int write,
 		{
 			if(idev->cnf.rpl_enabled && !idev->cnf.rpl_joined)
 			{
+				rtnl_lock();
 				if (rpl_start(NULL,idev->dev)) {
 					printk(KERN_WARNING "RPL: error starting RPL\n");
 					ret = -EINVAL;
 					idev->cnf.rpl_enabled = old;
 				}
+				rtnl_unlock();
 			}else if(!idev->cnf.rpl_enabled && idev->cnf.rpl_joined) {
 				if (rpl_stop(idev->dev)) {
 					printk(KERN_WARNING "RPL: error stop RPL\n");
